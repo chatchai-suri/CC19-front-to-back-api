@@ -9,6 +9,23 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+model Profile {
+  id Int @id @default(autoincrement())
+  email String @unique
+  firstname String
+  lastname String
+  password String
+  role Role @default(USER)
+  createAt DateTime @default(now()) @map("create_at")
+  updateAT DateTime @updatedAt @map("update_at")
+
+  @@map("profile")
 }
