@@ -142,3 +142,79 @@ app.use(handleErrors)
 PORT=8888
 app.listen(PORT, ()=> console.log(`Server is running on localhost:${PORT}`))
 ```
+
+## step 9 Create validation at each Controller and make function createError
+/controllers/auth-controllers.js create validation statement
+```js
+exports.register = (req, res, next) => {
+  try {
+    // code
+    // step 1 req.body
+    const {email, firstname, lastname, password, confirmPassword} = req.body
+    console.log(email, firstname, lastname, password, confirmPassword)
+    // step 2 validate
+    if(!email){
+      return res.status(400).json({message: "Email is required"})
+    }
+    if(!firstname){
+      return res.status(400).json({mssage: "Firstname is required"})
+    }
+    // step 3 Check already
+    // step 4 Encrypt by bcrypt
+    // step 5 Insert DB
+    // step 6 Response
+    res.json({message: "Hello register"})
+  } catch (error) {
+    console.log(error)
+    res
+    .status(500)
+    .json({message: "Server Error !!!"})
+  }
+}
+```
+```plaintext
+/utils/createError.js create function createError which able to reuse in many validation statement
+```
+```js
+const createError = (code, message) => {
+  // code
+  console.log("Step1 Create error")
+  const error = new Error(message)
+  error.statusCode = code
+  throw error
+}
+
+module.exports = createError
+```
+/controllers/auth-controllers.js update by utilize function createError and update catch state to use next(error)
+```js
+exports.register = (req, res, next) => {
+  try {
+    // code
+    // step 1 req.body
+    const {email, firstname, lastname, password, confirmPassword} = req.body
+    console.log(email, firstname, lastname, password, confirmPassword)
+    // step 2 validate
+    if(!email){
+      return createError(400, "Email is required")
+    }
+    if(!firstname){
+      return createError(400, "Firstname is required")
+    }
+    // step 3 Check already
+    // step 4 Encrypt by bcrypt
+    // step 5 Insert DB
+    // step 6 Response
+    res.json({message: "Hello register"})
+  } catch (error) {
+    console.log("step 2 catch")
+    next(error)
+
+  }
+}
+```
+
+
+|Method|Endpoint|Body|
+|----|----|----|
+|Post|/api/register|email,password|
