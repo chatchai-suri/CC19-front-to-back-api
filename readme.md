@@ -4,11 +4,18 @@
 ```bash
 npm init -y
 ```
-## Step 2 install package..., npx prisma init creates file gitignore (and its default) and .env
+## Step 2 install package..., 
 ```bash
 npm install express nodemon cors morgan bcryptjs jsonwebtoken zod prisma
 npx prisma init
 ```
+```plaintext
+npx prisma init creates 
+1) file /prisma/schema.prisma
+2) file /.gitignore
+3) file /.env
+```
+
 ## Step 3 Git
 ```bash
 git init
@@ -50,6 +57,11 @@ app.listen(PORT, ()=> console.log(`Server is running on localhost:${PORT}`))
 
 ## Step 5 use middleware
 ```js
+// Import more lib
+const cors = require("cors")
+const morgan = require("morgan")
+
+
 // Middlewares
 app.use((cors())) // Allows cross domain
 app.use(morgan("dev"))  // show log terminal
@@ -83,6 +95,33 @@ const authController = require("../controllers/auth-controllers")
 router.post("/register", authController.register)
 
 module.exports = router
+```
+
+update index.js, add routing (import & app.use)
+```js
+const express = require("express")
+const cors = require("cors")
+const morgan = require("morgan")
+
+// Import Routing
+const authRouter = require("./routes/auth-routes")
+
+
+const app = express()
+
+// Middlewares
+app.use(cors()) //Allows cross domain
+app.use(morgan("dev")) // show log terminal
+app.use(express.json()) // for read json
+
+// Routing
+app.use("/api", authRouter)
+
+
+
+// Start Server
+PORT = 8888
+app.listen(PORT, ()=> console.log(`Server is running on localhost:${PORT}`))
 ```
 
 ## Step 7 Routing and Controller and  endpoint [Login]
